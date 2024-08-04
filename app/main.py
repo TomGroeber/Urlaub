@@ -2,6 +2,8 @@ import streamlit as st
 from database import init_db, session, User, Vacation
 from user_auth import register_user, login_user
 import os
+from datetime import date, timedelta
+import calendar
 
 # Initialize the database if not already initialized
 if not os.path.exists("vacation_manager.db"):
