@@ -1,12 +1,16 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import streamlit as st
-from app.database import init_db, session, User, Vacation
-from app.user_auth import register_user, login_user
-from datetime import date, timedelta, datetime
-import calendar
+from database import init_db, session, User, Vacation
+from user_auth import register_user, login_user
+import os
+
+# Initialize the database if not already initialized
+if not os.path.exists("vacation_manager.db"):
+    st.write("Initializing database...")
+    init_db()
+    register_user("user1", "user1@example.com", "user1pass", 14, "Dreher")
+    register_user("user2", "user2@example.com", "user2pass", 14, "Fräser")
+    register_user("user3", "user3@example.com", "user3pass", 14, "Dreher")
+    register_user("admin", "admin@example.com", "adminpass", 0, "Admin")
 
 # Datenbank initialisieren
 init_db()
