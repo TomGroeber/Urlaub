@@ -11,9 +11,7 @@ if not os.path.exists("vacation_manager.db"):
     register_user("user2", "user2@example.com", "user2pass", 14, "Fräser")
     register_user("user3", "user3@example.com", "user3pass", 14, "Dreher")
     register_user("admin", "admin@example.com", "adminpass", 0, "Admin")
-
-# Datenbank initialisieren
-init_db()
+    st.experimental_rerun()
 
 # Funktion zum Zurücksetzen der Urlaubsdaten
 def reset_vacations():
@@ -54,26 +52,36 @@ if st.session_state.user is None:
         vacation_days = st.number_input("Vacation Days", min_value=0)
         role = st.selectbox("Role", ["Dreher", "Fräser", "Alles"])
         if st.button("Register"):
-            register_user(username, email, password, vacation_days, role)
-            st.success("Account created successfully!")
+            try:
+                register_user(username, email, password, vacation_days, role)
+                st.success("Account created successfully!")
+            except Exception as e:
+                st.error(f"Error: {e}")
     
     if choice == "Login":
         st.subheader("Login to Your Account")
         username = st.text_input("Username")
         password = st.text_input("Password", type="password")
         if st.button("Login"):
-            print(f"Trying to log in with username: {username} and password: {password}")
-            user = login_user(username, password)
-            if user:
-                st.session_state.user = user
-                st.experimental_rerun()
-            else:
-                st.error("Invalid credentials")
+            try:
+                user = login_user(username, password)
+                if user:
+                    st.session_state.user = user
+                    st.experimental_rerun()
+                else:
+                    st.error("Invalid credentials")
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 else:
     user = st.session_state.user
-    used_days = calculate_used_vacation_days(user.id)
-    remaining_days = user.vacation_days - used_days
+    try:
+        used_days = calculate_used_vacation_days(user.id)
+        remaining_days = user.vacation_days - used_days
+    except Exception as e:
+        st.error(f"Error calculating vacation days: {e}")
+        remaining_days = user.vacation_days
+
     st.write(f"Welcome, {user.username}!")
     st.write(f"Role: {user.role}")
     st.write(f"You have {remaining_days} vacation days remaining.")
